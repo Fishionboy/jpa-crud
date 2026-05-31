@@ -1,5 +1,6 @@
 package com.apicrud.jpa.controllers;
 
+import com.apicrud.jpa.repositories.ProductRepository;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,8 +23,13 @@ import com.apicrud.jpa.services.ProductService;
 @RequestMapping("/api/products")
 public class ProductController {
 
+    private final ProductRepository productRepository;
     @Autowired
     ProductService service;
+
+    ProductController(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
 
     @GetMapping
     public List<Product> list() {
@@ -46,16 +52,17 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Product> update(@PathVariable Long id,@RequestBody Product product){
-        product.setId(id);
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(product));
+    public ResponseEntity<Product> update(@PathVariable Long id,@RequestBody Product product){      
+        Optional<Product> productOptional = service.update(id, product);
+        if(productOptional.isPresent()){
+            return ResponseEntity.status(HttpStatus.CREATED).body(productOptional.orElseThrow());            
+        }
+         return ResponseEntity.notFound().build(); 
     }
 
         @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id){
-        Product newProduct = new Product();
-        newProduct.setId(id);
-        Optional <Product> productOptional = service.findById(id);
+    public ResponseEntity<?> delete(@PathVariable Long id){       
+        Optional <Product> productOptional = service.delete(id);
         if(productOptional.isPresent()){
             return ResponseEntity.ok(productOptional.orElseThrow());
         }
