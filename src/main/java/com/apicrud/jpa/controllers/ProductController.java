@@ -1,7 +1,5 @@
 package com.apicrud.jpa.controllers;
 
-import com.apicrud.jpa.repositories.ProductRepository;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,13 +27,12 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/products")
 public class ProductController {
 
-    private final ProductRepository productRepository;
+    // @Autowired
+    // private ProductValidation validation;
     @Autowired
     ProductService service;
 
-    ProductController(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
+
 
     @GetMapping
     public List<Product> list() {
@@ -53,6 +50,7 @@ public class ProductController {
 
     @PostMapping
     public ResponseEntity<?> create (@Valid @RequestBody Product product, BindingResult result){
+        // validation.validate(product, result);
        if(result.hasFieldErrors()){
         return validation(result);
        }
@@ -61,7 +59,8 @@ public class ProductController {
 
     
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@Valid  @RequestBody Product product, BindingResult result, @PathVariable Long id){      
+    public ResponseEntity<?> update(@Valid  @RequestBody Product product, BindingResult result, @PathVariable Long id){    
+        //  validation.validate(product, result);  
          if(result.hasFieldErrors()){
         return validation(result);
        }

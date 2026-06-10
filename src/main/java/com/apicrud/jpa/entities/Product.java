@@ -1,15 +1,16 @@
 package com.apicrud.jpa.entities;
 
+import com.apicrud.jpa.validation.IsExistsDb;
+import com.apicrud.jpa.validation.IsRequired;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "products")
@@ -22,12 +23,15 @@ public class Product {
     private String name;
 
     @Min(value = 500,message = "{Min.product.price}")
-    @NotNull(message = "{NotEmpty.product.price}")
+    @NotNull(message = "{NotNull.product.price}")
     private Integer price;
 
-    @NotBlank(message = "{NotEmpty.product.description}")
-    @Size(min = 3,max = 20)
+    @IsRequired(message = "{IsRequired.product.description}")
     private String description;
+
+    @IsExistsDb
+    @IsRequired
+    private String sku;
 
     public Long getId() {
         return id;
@@ -53,8 +57,12 @@ public class Product {
         this.price = price;
     }
 
-    public void Integer(Integer price) {
-        this.price = price;
+        public String getSku() {
+        return sku;
+    }
+
+    public void setSku(String sku) {
+        this.sku = sku;
     }
 
     public String getDescription() {
