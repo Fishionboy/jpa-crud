@@ -82,6 +82,7 @@ public class ProductController {
 
     private ResponseEntity<?> validation(BindingResult result) {
         Map<String, String> errors = new HashMap<>();
+        
         result.getFieldErrors().forEach(err ->{
             errors.put(err.getField(),"El campo "+ err.getField() + " "+ err.getDefaultMessage());
         });
