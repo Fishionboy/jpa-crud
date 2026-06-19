@@ -1,8 +1,11 @@
 package com.apicrud.jpa.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.apicrud.jpa.validation.ExistsByUsername;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Column;
@@ -28,6 +31,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ExistsByUsername
     @Column(unique = true)
     @NotBlank
     @Size(min = 4, max = 12)
@@ -40,9 +44,14 @@ public class User {
 
     private boolean enabled;
 
+    @JsonIgnoreProperties({"users","handler","hibernateLazyInitializer"})
     @ManyToMany
-    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"), uniqueConstraints = {
-            @UniqueConstraint(columnNames = { "user_id", "role_id" }) })
+    @JoinTable(
+        name = "user_roles", 
+        joinColumns = @JoinColumn(name = "user_id"), 
+        inverseJoinColumns = @JoinColumn(name = "role_id"), 
+        uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "role_id" }) }
+    )
     private List<Role> roles;
 
     @Transient
@@ -54,6 +63,9 @@ public class User {
         enabled = true;
     }
 
+    public User() {
+        roles = new ArrayList<>();
+    }
 
     public Long getId() {
         return id;
@@ -102,5 +114,38 @@ public class User {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((username == null) ? 0 : username.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        User other = (User) obj;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        if (username == null) {
+            if (other.username != null)
+                return false;
+        } else if (!username.equals(other.username))
+            return false;
+        return true;
+    }
+
+    
 
 }

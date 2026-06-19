@@ -42,7 +42,7 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody User user, BindingResult result){
        
-       user.setAdmin(false);
+       user.setAdmin(user.isAdmin());
         return create(user, result);
     }
 

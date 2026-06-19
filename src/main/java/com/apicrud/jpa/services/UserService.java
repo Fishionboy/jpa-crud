@@ -7,5 +7,7 @@ import com.apicrud.jpa.entities.User;
 public interface UserService {
     List<User> findAll();
 
-    User save(User user);    
+    User save(User user);
+    
+    boolean existsByUsername(String username);
 }
